@@ -15,7 +15,7 @@ export const connectToDB = async () => {
 		// 	mongoURI: process.env.MONGODB_URI,
 		// });
 		await mongoose.connect(process.env.MONGODB_URI, {
-			dbName: "builtitnext",
+			dbName: "journal",
 		});
 
 		isConnected = true;

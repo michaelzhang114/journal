@@ -57,7 +57,7 @@ const Nav = () => {
 								}}
 							>
 								<li>
-									<Link href="#">Text</Link>{" "}
+									<Link href="#">Write</Link>{" "}
 								</li>
 							</ul>
 						</div>

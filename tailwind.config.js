@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+// const path = require("path");
+
 module.exports = {
 	content: [
 		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -6,13 +8,23 @@ module.exports = {
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
-		extend: {
-			backgroundImage: {
-				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-				"gradient-conic":
-					"conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-			},
-		},
+		// 	extend: {
+		// 		backgroundImage: {
+		// 			"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+		// 			"gradient-conic":
+		// 				"conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+		// 		},
+		// 	},
+		// },
+		// sassOptions: {
+		// 	includePaths: [path.join(__dirname, "styles")],
+	},
+	plugins: [
+		require("@tailwindcss/typography"),
+		// ...
+	],
+	daisyui: {
+		themes: ["light"],
 	},
 	plugins: [require("daisyui")],
 };
