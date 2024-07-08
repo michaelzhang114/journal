@@ -15,8 +15,10 @@ import Text from "@tiptap/extension-text";
 import "@styles/tiptap.scss";
 import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
+import { useSession } from "next-auth/react";
 
 import { getDate } from "@utils/date";
+import { revalidatePath } from "next/cache";
 
 // define your extension array
 // const extensions = [Document, Paragraph, Text, BulletList, ListItem];
@@ -29,38 +31,71 @@ const extensions = [
 	}),
 ];
 
-const content = `<h1>${getDate()}</h1>`;
+// const content = `<h1>${getDate()}</h1>`;
 
-const TipTap = () => {
+const TipTap = ({ noteId, contents, setContents }) => {
+	const { data: session, status } = useSession();
+
+	console.log(contents);
 	const editor = useEditor({
 		extensions,
-		content,
+		content: `${contents}`,
 		editorProps: {
 			attributes: {
 				class: "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none editor_size",
 			},
 		},
-		// onUpdate({ editor }) {
-		// 	// The content has changed.
-
-		// },
 	});
 
-	const [myContent, setMyContent] = useState("");
-	// create editor instance and other stuff
+	// const [myContent, setMyContent] = useState("");
 	const [debouncedEditor] = useDebounce(editor?.state.doc.content, 2000);
 
-	useEffect(() => {
-		if (debouncedEditor) {
-			// save
-			console.log("saving");
-			console.log(editor?.getHTML());
-			setMyContent(editor?.getHTML());
+	const [submitting, setSubmitting] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
+
+	const updateNote = async (updatedContents) => {
+		setSubmitting(true);
+
+		try {
+			// console.log(session?.user.id);
+
+			const response = await fetch(`api/note/${noteId}`, {
+				method: "PATCH",
+				body: JSON.stringify({
+					contents: updatedContents,
+				}),
+			});
+
+			if (response.ok) {
+				// display "saved to profile!"
+				console.log("saved");
+				// router.push("/profile");
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setSubmitting(false);
+			setIsSubmitted(true);
 		}
-	}, [debouncedEditor]);
+	};
+
+	// useEffect(() => {
+	// 	if (debouncedEditor) {
+	// 		// save
+	// 		console.log("saving");
+	// 		updateNote(editor?.getHTML());
+	// 		// setMyContent(editor?.getHTML());
+	// 	}
+	// }, [debouncedEditor]);
+
+	useEffect(() => {
+		editor?.commands.setContent(contents);
+		console.log("setting");
+	}, [contents]);
 
 	return (
-		<>
+		<section>
+			<div>{contents}</div>
 			<EditorContent editor={editor} />
 			{editor && (
 				<FloatingMenu
@@ -144,8 +179,15 @@ const TipTap = () => {
 					</button>
 				</BubbleMenu>
 			)}{" "}
-			<button className="btn btn-primary">Hi</button>
-		</>
+			<button
+				className="btn btn-primary"
+				onClick={() => {
+					updateNote(editor?.getHTML());
+				}}
+			>
+				Save
+			</button>
+		</section>
 	);
 };
 

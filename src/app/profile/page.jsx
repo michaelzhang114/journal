@@ -1,12 +1,9 @@
-import TipTap from "@components/TipTap";
+import Feed from "@components/Feed";
+import Form from "@components/Form";
 import React from "react";
 
 const page = () => {
-	return (
-		<section>
-			<TipTap />
-		</section>
-	);
+	return <section></section>;
 };
 
 export default page;

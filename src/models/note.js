@@ -1,16 +1,16 @@
 import { Schema, model, models } from "mongoose";
 
-const noteSchema = new Schema({
+const NoteSchema = new Schema({
 	creator: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
 	},
-	content: {
+	contents: {
 		type: String,
-		required: [true, "Content is required."],
+		// required: [true, "Contents is required."],
 	},
 });
 
-const User = models.User || model("User", noteSchema);
+const Note = models.Note || model("Note", NoteSchema);
 
-export default User;
+export default Note;
