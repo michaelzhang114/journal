@@ -36,7 +36,9 @@ const extensions = [
 const TipTap = ({ noteId, contents, setContents }) => {
 	const { data: session, status } = useSession();
 
-	console.log(contents);
+	// const [myEditorContent, setMyEditorContent] = useState("");
+
+	// console.log(contents);
 	const editor = useEditor({
 		extensions,
 		content: `${contents}`,
@@ -45,6 +47,9 @@ const TipTap = ({ noteId, contents, setContents }) => {
 				class: "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none editor_size",
 			},
 		},
+		// onUpdate({ editor }) {
+		// 	setMyEditorContent(editor.getHTML());
+		// },
 	});
 
 	// const [myContent, setMyContent] = useState("");
@@ -52,6 +57,36 @@ const TipTap = ({ noteId, contents, setContents }) => {
 
 	const [submitting, setSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
+
+	const createNote = async (editorContents) => {
+		// console.log(editorContents);
+		// debugger;
+		// console.log(myEditorContent);
+		setSubmitting(true);
+
+		try {
+			// console.log(session?.user.id);
+
+			const response = await fetch(`api/note/new`, {
+				method: "POST",
+				body: JSON.stringify({
+					userId: session?.user.id,
+					contents: editorContents,
+				}),
+			});
+
+			if (response.ok) {
+				// display "saved to profile!"
+				console.log("saved");
+				// router.push("/profile");
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setSubmitting(false);
+			setIsSubmitted(true);
+		}
+	};
 
 	const updateNote = async (updatedContents) => {
 		setSubmitting(true);
@@ -95,7 +130,6 @@ const TipTap = ({ noteId, contents, setContents }) => {
 
 	return (
 		<section>
-			<div>{contents}</div>
 			<EditorContent editor={editor} />
 			{editor && (
 				<FloatingMenu
@@ -179,6 +213,14 @@ const TipTap = ({ noteId, contents, setContents }) => {
 					</button>
 				</BubbleMenu>
 			)}{" "}
+			<button
+				className="btn btn-primary"
+				onClick={() => {
+					createNote(editor?.getHTML());
+				}}
+			>
+				New
+			</button>
 			<button
 				className="btn btn-primary"
 				onClick={() => {
