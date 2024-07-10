@@ -20,6 +20,8 @@ import { useSession } from "next-auth/react";
 import { getDate } from "@utils/date";
 import { revalidatePath } from "next/cache";
 
+import styles from "./TipTap.module.css";
+
 // define your extension array
 // const extensions = [Document, Paragraph, Text, BulletList, ListItem];
 const extensions = [
@@ -130,105 +132,120 @@ const TipTap = ({ noteId, contents, setContents }) => {
 
 	return (
 		<section>
-			<EditorContent editor={editor} />
-			{editor && (
-				<FloatingMenu
-					className="floating-menu"
-					tippyOptions={{ duration: 100 }}
-					editor={editor}
+			<div className="bg-orange-400">
+				<EditorContent editor={editor} className={styles.editor} />
+				{editor && (
+					<FloatingMenu
+						className="floating-menu"
+						tippyOptions={{ duration: 100 }}
+						editor={editor}
+					>
+						<button
+							onClick={() =>
+								editor
+									.chain()
+									.focus()
+									.toggleHeading({ level: 1 })
+									.run()
+							}
+							className={
+								editor.isActive("heading", { level: 1 })
+									? "is-active"
+									: ""
+							}
+						>
+							H1
+						</button>
+						<button
+							onClick={() =>
+								editor
+									.chain()
+									.focus()
+									.toggleHeading({ level: 2 })
+									.run()
+							}
+							className={
+								editor.isActive("heading", { level: 2 })
+									? "is-active"
+									: ""
+							}
+						>
+							H2
+						</button>
+						<button
+							onClick={() =>
+								editor.chain().focus().toggleBulletList().run()
+							}
+							className={
+								editor.isActive("bulletList") ? "is-active" : ""
+							}
+						>
+							Bullet list
+						</button>
+					</FloatingMenu>
+				)}
+				{editor && (
+					<BubbleMenu
+						className="bubble-menu"
+						tippyOptions={{ duration: 100 }}
+						editor={editor}
+					>
+						<button
+							onClick={() =>
+								editor.chain().focus().toggleBold().run()
+							}
+							className={
+								editor.isActive("bold") ? "is-active" : ""
+							}
+						>
+							Bold
+						</button>
+						<button
+							onClick={() =>
+								editor.chain().focus().toggleItalic().run()
+							}
+							className={
+								editor.isActive("italic") ? "is-active" : ""
+							}
+						>
+							Italic
+						</button>
+						<button
+							onClick={() =>
+								editor.chain().focus().toggleStrike().run()
+							}
+							className={
+								editor.isActive("strike") ? "is-active" : ""
+							}
+						>
+							Strike
+						</button>
+					</BubbleMenu>
+				)}{" "}
+				<button
+					className="btn btn-primary"
+					onClick={() => {
+						const dateStr = `<h1>${getDate()}</h1>`;
+						editor?.commands.setContent(dateStr);
+
+						// save what's in the editor
+						// createNote(editor?.getHTML());
+
+						// save the default boilerplate
+						createNote(dateStr);
+					}}
 				>
-					<button
-						onClick={() =>
-							editor
-								.chain()
-								.focus()
-								.toggleHeading({ level: 1 })
-								.run()
-						}
-						className={
-							editor.isActive("heading", { level: 1 })
-								? "is-active"
-								: ""
-						}
-					>
-						H1
-					</button>
-					<button
-						onClick={() =>
-							editor
-								.chain()
-								.focus()
-								.toggleHeading({ level: 2 })
-								.run()
-						}
-						className={
-							editor.isActive("heading", { level: 2 })
-								? "is-active"
-								: ""
-						}
-					>
-						H2
-					</button>
-					<button
-						onClick={() =>
-							editor.chain().focus().toggleBulletList().run()
-						}
-						className={
-							editor.isActive("bulletList") ? "is-active" : ""
-						}
-					>
-						Bullet list
-					</button>
-				</FloatingMenu>
-			)}
-			{editor && (
-				<BubbleMenu
-					className="bubble-menu"
-					tippyOptions={{ duration: 100 }}
-					editor={editor}
+					New
+				</button>
+				<button
+					className="btn btn-primary"
+					onClick={() => {
+						updateNote(editor?.getHTML());
+					}}
 				>
-					<button
-						onClick={() =>
-							editor.chain().focus().toggleBold().run()
-						}
-						className={editor.isActive("bold") ? "is-active" : ""}
-					>
-						Bold
-					</button>
-					<button
-						onClick={() =>
-							editor.chain().focus().toggleItalic().run()
-						}
-						className={editor.isActive("italic") ? "is-active" : ""}
-					>
-						Italic
-					</button>
-					<button
-						onClick={() =>
-							editor.chain().focus().toggleStrike().run()
-						}
-						className={editor.isActive("strike") ? "is-active" : ""}
-					>
-						Strike
-					</button>
-				</BubbleMenu>
-			)}{" "}
-			<button
-				className="btn btn-primary"
-				onClick={() => {
-					createNote(editor?.getHTML());
-				}}
-			>
-				New
-			</button>
-			<button
-				className="btn btn-primary"
-				onClick={() => {
-					updateNote(editor?.getHTML());
-				}}
-			>
-				Save
-			</button>
+					Save
+				</button>
+			</div>
 		</section>
 	);
 };

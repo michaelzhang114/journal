@@ -1,5 +1,6 @@
 import { connectToDB } from "@utils/database";
 import Note from "@models/note";
+import { revalidatePath } from "next/cache";
 
 //GET
 export const GET = async (request, { params }) => {
@@ -35,10 +36,12 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB();
 		await Note.findByIdAndDelete(params.id);
+		revalidatePath("/update-note");
+
 		return new Response(JSON.stringify("Note deleted successfully"), {
 			status: 200,
 		});
 	} catch (error) {
-		return new Response("failed to delete project", { status: 500 });
+		return new Response("failed to delete note", { status: 500 });
 	}
 };

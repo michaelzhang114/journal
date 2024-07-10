@@ -4,10 +4,14 @@ import Feed from "@components/Feed";
 
 const UpdateNote = () => {
 	return (
-		<section className="flex flex-row">
-			<Form className="flex-1" />
+		<section className="mx-auto max-w-xs">
+			<div>
+				<Form className="" />
+			</div>
 			<br />
-			<Feed className="flex-1" />
+			<div>
+				<Feed className="" />
+			</div>
 		</section>
 	);
 };

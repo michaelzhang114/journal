@@ -18,9 +18,9 @@ const NoteCardList = ({ data, handleDelete, handleEdit, loading }) => {
 				<NoteCard
 					key={note._id}
 					note={note}
-					// handleDelete={() => {
-					// 	handleDelete && handleDelete(proj);
-					// }}
+					handleDelete={() => {
+						handleDelete && handleDelete(note);
+					}}
 					handleEdit={() => {
 						handleEdit && handleEdit(note);
 					}}
@@ -76,7 +76,24 @@ const Feed = () => {
 		fetchNotes();
 	}, [mySort]);
 
-	const handleDelete = async (note) => {};
+	const handleDelete = async (note) => {
+		const hasConfirmed = confirm("Are you sure you want to delete?");
+		if (hasConfirmed) {
+			try {
+				await fetch(`/api/note/${note._id.toString()}`, {
+					method: "DELETE",
+				});
+				console.log("deleting note");
+				// const filteredPosts = posts.filter((p) => p._id !== post._id);
+				// setPosts(filteredPosts);
+				// setProjs((prevProjs) =>
+				// 	prevProjs.filter((p) => p._id !== proj._id)
+				// );
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
 
 	const handleEdit = (note) => {
 		console.log(note);
