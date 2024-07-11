@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 
-const Form = () => {
+const Form = ({ notes, setNotes, triggerNotesUpdate }) => {
 	const router = useRouter();
 	const [submitting, setSubmitting] = useState(false);
 
@@ -60,6 +60,9 @@ const Form = () => {
 				noteId={noteId}
 				contents={contents}
 				setContents={setContents}
+				notes={notes}
+				setNotes={setNotes}
+				triggerNotesUpdate={triggerNotesUpdate}
 			/>
 		</section>
 	);

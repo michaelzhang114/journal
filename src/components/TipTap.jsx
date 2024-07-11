@@ -35,7 +35,7 @@ const extensions = [
 
 // const content = `<h1>${getDate()}</h1>`;
 
-const TipTap = ({ noteId, contents, setContents }) => {
+const TipTap = ({ noteId, contents, setContents, triggerNotesUpdate }) => {
 	const { data: session, status } = useSession();
 
 	// const [myEditorContent, setMyEditorContent] = useState("");
@@ -113,6 +113,7 @@ const TipTap = ({ noteId, contents, setContents }) => {
 		} finally {
 			setSubmitting(false);
 			setIsSubmitted(true);
+			triggerNotesUpdate();
 		}
 	};
 
@@ -132,8 +133,10 @@ const TipTap = ({ noteId, contents, setContents }) => {
 
 	return (
 		<section>
-			<div className="bg-orange-400">
-				<EditorContent editor={editor} className={styles.editor} />
+			<div className="border-4">
+				<div className={styles.editor}>
+					<EditorContent editor={editor} />
+				</div>
 				{editor && (
 					<FloatingMenu
 						className="floating-menu"
@@ -222,29 +225,31 @@ const TipTap = ({ noteId, contents, setContents }) => {
 						</button>
 					</BubbleMenu>
 				)}{" "}
-				<button
-					className="btn btn-primary"
-					onClick={() => {
-						const dateStr = `<h1>${getDate()}</h1>`;
-						editor?.commands.setContent(dateStr);
+				<div className={styles.buttons}>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							const dateStr = `<h1>${getDate()}</h1>`;
+							editor?.commands.setContent(dateStr);
 
-						// save what's in the editor
-						// createNote(editor?.getHTML());
+							// save what's in the editor
+							// createNote(editor?.getHTML());
 
-						// save the default boilerplate
-						createNote(dateStr);
-					}}
-				>
-					New
-				</button>
-				<button
-					className="btn btn-primary"
-					onClick={() => {
-						updateNote(editor?.getHTML());
-					}}
-				>
-					Save
-				</button>
+							// save the default boilerplate
+							createNote(dateStr);
+						}}
+					>
+						New
+					</button>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							updateNote(editor?.getHTML());
+						}}
+					>
+						Save
+					</button>
+				</div>
 			</div>
 		</section>
 	);

@@ -7,14 +7,21 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import NoteCard from "./NoteCard";
 
-const NoteCardList = ({ data, handleDelete, handleEdit, loading }) => {
+const NoteCardList = ({
+	data,
+	handleDelete,
+	handleEdit,
+	loading,
+	setNotes,
+	activeNoteId,
+}) => {
 	return loading ? (
 		<span className="loading loading-ring loading-lg"></span>
-	) : data.length == 0 ? (
+	) : data?.length == 0 ? (
 		<p>You don&apos;t have any notes.</p>
 	) : (
 		<div className="flex flex-col">
-			{data.map((note) => (
+			{data?.map((note) => (
 				<NoteCard
 					key={note._id}
 					note={note}
@@ -24,6 +31,8 @@ const NoteCardList = ({ data, handleDelete, handleEdit, loading }) => {
 					handleEdit={() => {
 						handleEdit && handleEdit(note);
 					}}
+					setNotes={setNotes}
+					activeNoteId={activeNoteId}
 				/>
 			))}
 		</div>
@@ -51,30 +60,16 @@ const sortByKey = (array, key) => {
 	return ascend.toReversed();
 };
 
-const Feed = () => {
-	const [notes, setNotes] = useState([]);
+const Feed = ({ notes, setNotes }) => {
 	const [loading, setLoading] = useState(false);
 
 	const searchParams = useSearchParams();
 	const mySort = searchParams.get("sort");
+	const myActiveNoteId = searchParams.get("id");
+
 	// console.log(mySort);
 
 	const router = useRouter();
-
-	useEffect(() => {
-		const fetchNotes = async () => {
-			// setLoading(true);
-			const response = await fetch("/api/note");
-			const data = await response.json();
-			console.log(data);
-
-			// if no sorting
-			if (!mySort) {
-				setNotes(data);
-			}
-		};
-		fetchNotes();
-	}, [mySort]);
 
 	const handleDelete = async (note) => {
 		const hasConfirmed = confirm("Are you sure you want to delete?");
@@ -86,6 +81,8 @@ const Feed = () => {
 				console.log("deleting note");
 				// const filteredPosts = posts.filter((p) => p._id !== post._id);
 				// setPosts(filteredPosts);
+				const filteredNotes = notes.filter((n) => n._id !== note._id);
+				setNotes(filteredNotes);
 				// setProjs((prevProjs) =>
 				// 	prevProjs.filter((p) => p._id !== proj._id)
 				// );
@@ -104,9 +101,11 @@ const Feed = () => {
 		<div className="max-w-sm mx-auto md:max-w-xl lg:max-w-3xl mt-4">
 			<NoteCardList
 				data={notes}
+				setNotes={setNotes}
 				handleEdit={handleEdit}
 				handleDelete={handleDelete}
 				loading={loading}
+				activeNoteId={myActiveNoteId}
 			/>
 		</div>
 	);
